@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import matplotlib.cm as cm
 
+
 def plot(rq_speed_csv: str, cutoff_csv: str, result_dir: str, counter_folder: str, cutoff_values_to_plot: list):
     # Load the CSV data (original times)
     data = pd.read_csv(rq_speed_csv)
@@ -74,7 +75,8 @@ def plot(rq_speed_csv: str, cutoff_csv: str, result_dir: str, counter_folder: st
         ).reset_index()
 
         # Plot the original query time (without any adjustments)
-        ax[0].plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'], marker='o', linestyle='-', color='red', label='Original Query Time')
+        ax[0].plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'], marker='o', linestyle='-', color='red',
+                   label='Original Query Time')
 
         # Plot the optimal times for the specified cutoff values
         for i, cutoff in enumerate(cutoff_values_to_plot):
@@ -82,7 +84,8 @@ def plot(rq_speed_csv: str, cutoff_csv: str, result_dir: str, counter_folder: st
             color = colors[i]  # Get the color from the colormap
 
             # Plot each optimal time with the respective color
-            ax[0].plot(cutoff_group['QUERY_ID'], cutoff_group['OPTIMAL_TIME'], marker='o', linestyle='--', color=color, label=f'Optimal Time (CUTOFF={cutoff})')
+            ax[0].plot(cutoff_group['QUERY_ID'], cutoff_group['OPTIMAL_TIME'], marker='o', linestyle='--', color=color,
+                       label=f'Optimal Time (CUTOFF={cutoff})')
 
         # Title and labels for the first plot
         ax[0].set_title(f'Query Time for {json_name}')
@@ -99,6 +102,7 @@ def plot(rq_speed_csv: str, cutoff_csv: str, result_dir: str, counter_folder: st
         plot_filename = os.path.join(result_dir, f"{json_name}_combined_plot.png")
         plt.savefig(plot_filename)
         plt.close()  # Close the figure to avoid memory issues
+
 
 if __name__ == "__main__":
     rq_speed_csv = ".a_extern_final_results/speed/optimal/bundled.csv"
