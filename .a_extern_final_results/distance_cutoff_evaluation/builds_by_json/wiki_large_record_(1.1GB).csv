@@ -1,0 +1,6 @@
+JSON,CUTOFF,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+wiki_large_record_(1.1GB),0,1.19652,54814961
+wiki_large_record_(1.1GB),64,0.97796,31955739
+wiki_large_record_(1.1GB),128,0.85566,23479989
+wiki_large_record_(1.1GB),512,0.61707,4398435
+wiki_large_record_(1.1GB),8192,0.56246,183456

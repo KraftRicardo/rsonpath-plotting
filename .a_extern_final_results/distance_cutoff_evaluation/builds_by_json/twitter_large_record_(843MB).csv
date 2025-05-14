@@ -1,0 +1,6 @@
+JSON,CUTOFF,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+twitter_large_record_(843MB),0,0.4262,10757878
+twitter_large_record_(843MB),64,0.36114,5102790
+twitter_large_record_(843MB),128,0.33685,4166940
+twitter_large_record_(843MB),512,0.33354,2319456
+twitter_large_record_(843MB),8192,0.28896,53919

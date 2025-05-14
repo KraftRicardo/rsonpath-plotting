@@ -1,0 +1,6 @@
+JSON,CUTOFF,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+nspl_large_record_(1.2GB),0,0.42969,8075488
+nspl_large_record_(1.2GB),64,0.42277,8047056
+nspl_large_record_(1.2GB),128,0.37757,4037360
+nspl_large_record_(1.2GB),512,0.37128,4008948
+nspl_large_record_(1.2GB),8192,0.31374,42

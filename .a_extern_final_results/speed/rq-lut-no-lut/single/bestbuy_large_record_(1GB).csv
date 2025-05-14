@@ -1,0 +1,17 @@
+QUERY_ID,QUERY_TEXT,QUERY_TIME_SECONDS
+1,$.products[4].categoryPath[2],0.17153
+2,$.products[*].categoryPath[2],0.24947
+3,$.products[*].quantityLimit,0.36449
+4,$.products[*].frequentlyPurchasedWith[*],0.23370
+5,$.products[*].includedItemList[*],0.23709
+6,$.products[*].homeDelivery,0.55377
+7,$.products[*].freeShipping,0.63324
+8,$.products[*].shipping[*],0.26391
+9,$.products[*].shippingLevelsOfService[*].serviceLevelName,0.33415
+10,$.products[*].shippingLevelsOfService[*],0.29793
+11,$.products[*].dollarSavings,0.94551
+12,$.products[*].lengthInMinutes,0.97367
+13,$.products[*].screenFormat,0.99392
+14,$.products[*].additionalFeatures[*],0.28048
+15,$.products[*].videoChapters,0.98126
+16,$..freeShipping,0.12981

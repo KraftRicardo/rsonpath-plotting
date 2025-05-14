@@ -1,0 +1,6 @@
+JSON,CUTOFF,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+bestbuy_large_record_(1GB),0,0.51288,16103794
+bestbuy_large_record_(1GB),64,0.37736,4097886
+bestbuy_large_record_(1GB),128,0.35458,1389178
+bestbuy_large_record_(1GB),512,0.34306,531372
+bestbuy_large_record_(1GB),8192,0.32455,82

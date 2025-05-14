@@ -1,0 +1,6 @@
+JSON,CUTOFF,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+google_map_large_record_(1.1GB),0,0.72726,24131434
+google_map_large_record_(1.1GB),64,0.55093,6880594
+google_map_large_record_(1.1GB),128,0.52268,6064496
+google_map_large_record_(1.1GB),512,0.47794,2450674
+google_map_large_record_(1.1GB),8192,0.43071,266949

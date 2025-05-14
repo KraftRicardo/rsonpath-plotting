@@ -1,0 +1,6 @@
+JSON,CUTOFF,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+walmart_large_record_(995MB),0,0.31993,834202
+walmart_large_record_(995MB),64,0.31405,705302
+walmart_large_record_(995MB),128,0.31403,681576
+walmart_large_record_(995MB),512,0.31096,647356
+walmart_large_record_(995MB),8192,0.29044,2174

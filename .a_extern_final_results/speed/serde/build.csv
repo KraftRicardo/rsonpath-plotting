@@ -1,0 +1,10 @@
+JSON,BUILD_TIME_SECONDS,SIZE_IN_BYTES
+bestbuy_large_record_(1GB),11.87126,5177256301
+crossref1_(551MB),5.56142,3030361082
+crossref2_(1.1GB),11.11993,5983538795
+crossref4_(2.1GB),21.78801,11605217111
+google_map_large_record_(1.1GB),10.53657,7471805984
+nspl_large_record_(1.2GB),11.63428,4873994228
+twitter_large_record_(843MB),8.91674,4055463727
+walmart_large_record_(995MB),5.13561,1895340382
+wiki_large_record_(1.1GB),18.41950,12669300380

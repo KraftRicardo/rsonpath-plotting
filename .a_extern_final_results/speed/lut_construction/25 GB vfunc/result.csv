@@ -1,0 +1,2 @@
+name,input_size_bytes,num_keys,ptr_hash_double_BUILD,ptr_hash_double_QUERY,ptr_hash_double_HEAP,vfunc_double_BUILD,vfunc_double_QUERY,vfunc_double_HEAP,
+nested_col_(27.7GB),27702923827,92986053,37.38133428,4.776378868,213918213,37.422739107333335,4.4421208414,207107072,

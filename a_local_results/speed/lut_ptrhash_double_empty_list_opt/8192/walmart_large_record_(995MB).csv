@@ -1,0 +1,17 @@
+QUERY_ID,QUERY_TEXT,QUERY_TIME_SECONDS
+0,$.category,0.00901
+1,$.items[*].itemId,0.21488
+2,$.items[*].name,0.22704
+3,$.items[*].upc,0.24137
+4,$.items[*].categoryPath,0.24693
+5,$.items[*].salePrice,0.24052
+6,$.items[*].longDescription,0.24987
+7,$.items[*].msrp,0.27461
+8,$.items[*].thumbnailImage,0.26403
+9,$.items[*].mediumImage,0.26783
+10,$.items[*].largeImage,0.27323
+11,$.items[*].productTrackingUrl,0.28240
+12,$.items[*].productUrl,0.31491
+13,$.items[*].addToCartUrl,0.35687
+14,$.items[*].isbn,0.35155
+15,$..category,0.12278

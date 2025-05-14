@@ -1,0 +1,9 @@
+JSON,ALGORITHM,BUILD_TIME_SECONDS
+bestbuy_large_record_(1GB),SERDE,13.23085
+bestbuy_large_record_(1GB),rq-legacy,0
+bestbuy_large_record_(1GB),rq-lut-cutoff-0,3.84570
+bestbuy_large_record_(1GB),rq-lut-cutoff-512,0.31779
+crossref1_(551MB),SERDE,4.86304
+crossref1_(551MB),rq-legacy,0
+crossref1_(551MB),rq-lut-cutoff-0,0.51454
+crossref1_(551MB),rq-lut-cutoff-512,0.18742
