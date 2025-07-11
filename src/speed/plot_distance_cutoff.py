@@ -166,6 +166,7 @@ def collect_build(result_dir_path, cutoffs, build_dir_path):
         df = pd.DataFrame(rows)
         df.sort_values(by=["CUTOFF"], inplace=True)
         output_path = os.path.join(build_dir_path, f"{json_name}.csv")
+        print(f"Collecting build times in {output_path}")
         df.to_csv(output_path, index=False)
 
 
@@ -205,10 +206,13 @@ def collect_query(result_dir_path, cutoffs, query_dir_path):
         df = pd.DataFrame(rows)
         df.sort_values(by=["CUTOFF", "QUERY_ID"], inplace=True)
         output_path = os.path.join(query_dir_path, f"{json_name}.csv")
+        print(f"Collecting query times in {output_path}")
         df.to_csv(output_path, index=False)
         print(f"Wrote: {output_path}")
 
 def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str, result_dir_path: str, cutoffs):
+    os.makedirs(result_dir_path, exist_ok=True)
+
     print("Collecting data in one big csv")
     build_dir_path = f"{result_dir_path}/builds_by_json"
     query_dir_path = f"{result_dir_path}/queries_by_json"
@@ -227,11 +231,11 @@ def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str,
         build_results = f"{build_dir_path}/{name}.csv"
         query_results = f"{query_dir_path}/{name}.csv"
         counter_csv_path = f"{counter_dir_path}/COUNTER_{name}.csv"
-        top_image_path = f"{top_image_dir_path}/{name}_plot.png"
+        top_image_path = f"{top_image_dir_path}/{name}.png"
 
         plot_per_name(plots_dir_path, build_results, query_results, counter_csv_path, top_image_path, cutoffs)
 
-# Run with: python python/speed/plot_distance_cutoff.py
+# Run with: python src/speed/plot_distance_cutoff.py
 #
 # "data_dir_path" is the path to folder holding the to be plotted data. Per given cutoffs it expects a subdirectory
 # (named after the cutoff) that contains the .csv files with data (one .csv file per analyzed json file).
@@ -256,10 +260,10 @@ def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str,
 # "cutoffs" is a list that defines which cutoffs you are interested in plotting.
 if __name__ == "__main__":
     # Input
-    data_dir_path = ".a_extern_final_results/speed/lut_ptrhash_double_empty_list_opt"
-    counter_dir_path = ".a_extern_final_results/analysis/skip_counter"
-    top_image_dir_path = ".a_extern_final_results/analysis/distance_distribution"
-    result_dir_path = ".a_extern_final_results/speed/distance_cutoff"
+    data_dir_path = "res/data/speed/server/lut_ptrhash_double_empty_list_opt"
+    counter_dir_path = "res/data/analysis/skip_counter"
+    top_image_dir_path = "res/plots/analysis/distance_distribution/plots"
+    result_dir_path = "res/plots/speed/server/distance_cutoff"
     cutoffs = [0, 64, 128, 512, 8192]
     # cutoffs = [0, 1, 2, 64, 128, 192, 256, 320, 384, 448, 512, 1024, 2048, 4096, 8192]
 
