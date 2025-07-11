@@ -19,8 +19,10 @@ def increment_filename(path: str) -> str:
 def plot(
         csv_btree: str,
         csv_indexmap: str,
-        output_path: str,
+        result_dir_path: str,
 ):
+    os.makedirs(result_dir_path, exist_ok=True)
+
     # Read input CSVs
     data1 = pd.read_csv(csv_btree)
     data2 = pd.read_csv(csv_indexmap)
@@ -83,11 +85,15 @@ def plot(
     ax2.tick_params(axis='y', labelsize=tick_fontsize)
 
     plt.tight_layout()
-    output_path = increment_filename(output_path)
-    plt.savefig(output_path)
-    print(f"Plot saved to: {output_path}")
+    result_png_path = f"{result_dir_path}/serde_size_and_build_time.png"
+    result_png_path = increment_filename(result_png_path)
+    plt.savefig(result_png_path)
+    print(f"Plot saved to: {result_png_path}")
 
-# Run with: python python/analysis/plot_serde_size_and_build_time.py
+# Run with: python src/analysis/plot_serde_size_and_build_time.py
+#
+# Create build time and build size plot for serde measurement data.
+#
 # "btree_csv_path" is the path to the .csv holding all the btree data. Structure:
 #   NAME,ORIGINAL_BYTES,PARSE_TIME_SEC,HEAP_BYTES
 #   google_map_short_(107MB).json,106896877,2.590639,739103679
@@ -100,8 +106,8 @@ def plot(
 # the image already exists.
 if __name__ == "__main__":
     # Input
-    btree_csv_path = ".a_extern_final_results/analysis/serde_size_and_build_time/MB_100_btree.csv"
-    indexmap_csv_path = ".a_extern_final_results/analysis/serde_size_and_build_time/MB_100_indexmap.csv"
-    result_png_path = ".a_extern_final_results/analysis/serde_size_and_build_time/serde_size_and_build_time.png"
+    btree_csv_path = "res/data/analysis/serde_size_and_build_time/MB_100_btree.csv"
+    indexmap_csv_path = "res/data/analysis/serde_size_and_build_time/MB_100_indexmap.csv"
+    result_dir_path = "res/plots/analysis/serde_size_and_build_time"
 
-    plot(btree_csv_path, indexmap_csv_path, result_png_path)
+    plot(btree_csv_path, indexmap_csv_path, result_dir_path)

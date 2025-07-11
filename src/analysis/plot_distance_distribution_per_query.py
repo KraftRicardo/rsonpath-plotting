@@ -7,7 +7,7 @@ COLOR_1 = "#458AF5"
 COLOR_2 = "#F5BA45"
 
 
-def plot_binned_frequencies(df: pd.DataFrame, directory: str, file_base_name: str) -> None:
+def plot_binned_frequencies(df: pd.DataFrame, result_dir_path: str, file_base_name: str) -> None:
     if df.shape[1] != 3:
         raise ValueError("DataFrame should have exactly three columns: distance, frequency, and skip_type")
 
@@ -32,10 +32,22 @@ def plot_binned_frequencies(df: pd.DataFrame, directory: str, file_base_name: st
     x_labels = binned_df['binned_distance'].astype(str)
     x = range(len(x_labels))
 
-    plt.bar([i - bar_width / 2 for i in x], binned_df['lut_percentage'], width=bar_width, label='LUT', color=COLOR_1,
-            align='center')
-    plt.bar([i + bar_width / 2 for i in x], binned_df['ite_percentage'], width=bar_width, label='ITE', color=COLOR_2,
-            align='center')
+    plt.bar(
+        [i - bar_width / 2 for i in x],
+        binned_df['lut_percentage'],
+        width=bar_width,
+        label='LUT',
+        color=COLOR_1,
+        align='center'
+    )
+    plt.bar(
+        [i + bar_width / 2 for i in x],
+        binned_df['ite_percentage'],
+        width=bar_width,
+        label='ITE',
+        color=COLOR_2,
+        align='center'
+    )
 
     # Add labels on top of bars only if value is nonzero
     for i in x:
@@ -78,26 +90,38 @@ def plot_binned_frequencies(df: pd.DataFrame, directory: str, file_base_name: st
     plt.tight_layout()
 
     # Save plot
-    save_path = os.path.join(directory, "plots", f"{file_base_name}_plot.png")
-    plt.savefig(save_path)
-    print(f"Generated: {save_path}")
+    csv_path = f"{result_dir_path}/{file_base_name}.png"
+    plt.savefig(csv_path)
+    print(f"Generated: {csv_path}")
     plt.close()
 
 
-def plot_all(data_dir_path: str):
+def plot_all(data_dir_path: str, result_dir_path: str):
+    os.makedirs(result_dir_path, exist_ok=True)
+
     for filename in os.listdir(data_dir_path):
         if filename.endswith(".csv"):
             file_path = os.path.join(data_dir_path, filename)
-            directory, filename = os.path.split(file_path)
             file_base_name = os.path.splitext(filename)[0]
 
             df = pd.read_csv(file_path)
-            plot_binned_frequencies(df, directory, file_base_name.removesuffix("_distances"))
+            plot_binned_frequencies(df, result_dir_path, file_base_name.removesuffix("_distances"))
 
 
 # TODO
+# Run with: python src/analysis/plot_distance_distribution_per_query.py
+#
+# Plot the distance jumps taken by each individual query.
+#
+# Expected .csv strucutre:
+#   distance,frequency,skip_type
+#   20118,6,lut
+#   173266,1,lut
+#   ...
+# There is only one .csv per query.
 if __name__ == "__main__":
     # Input
-    data_dir_path = ".a_extern_final_results/analysis/distance_distribution_per_query/cutoff=0"
+    data_dir_path = "res/data/analysis/distance_distribution_per_query/cutoff=0"
+    result_dir_path = "res/plots/analysis/distance_distribution_per_query/cutoff=0"
 
-    plot_all(data_dir_path)
+    plot_all(data_dir_path, result_dir_path)

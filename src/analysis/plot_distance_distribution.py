@@ -45,7 +45,7 @@ def plot_binned_frequencies(df: pd.DataFrame, directory: str, file_base_name: st
 
     # Save plot
     plt.tight_layout()
-    save_path = f"{directory}/{file_base_name}_plot.png"
+    save_path = f"{directory}/{file_base_name}.png"
     plt.savefig(save_path)
     print(f"Generated: {save_path}")
     plt.close()
@@ -85,7 +85,7 @@ def plot_binned_frequencies_short(df: pd.DataFrame, directory: str, file_base_na
     plt.legend()
 
     plt.tight_layout()
-    save_path = f"{directory}/{file_base_name}_short.png"
+    save_path = f"{directory}/{file_base_name}.png"
     plt.savefig(save_path)
     print(f"Generated: {save_path}")
     plt.close()
@@ -94,8 +94,8 @@ def plot_binned_frequencies_short(df: pd.DataFrame, directory: str, file_base_na
 def plot_all(data_dir_path: str, result_dir_path: str):
     # Create output directories
     plots_dir_path = os.path.join(result_dir_path, "plots")
-    os.makedirs(plots_dir_path, exist_ok=True)
     plots_short_dir_path = os.path.join(result_dir_path, "plots_short")
+    os.makedirs(plots_dir_path, exist_ok=True)
     os.makedirs(plots_short_dir_path, exist_ok=True)
 
     # Get all JSON files in the directory
@@ -110,11 +110,14 @@ def plot_all(data_dir_path: str, result_dir_path: str):
             base_name = file_base_name.removesuffix("_distances")
 
             # Call plotting functions
+            print(f"Process: {base_name}")
             plot_binned_frequencies(df, plots_dir_path, base_name)
             plot_binned_frequencies_short(df, plots_short_dir_path, base_name)
 
 
-# Run with: python python/analysis/plot_distance_distribution.py
+# Run with: python src/analysis/plot_distance_distribution.py
+#
+# Plot the distance distribution of their brackets for individual JSON files.
 #
 # "data_dir_path" is the path to the folder holding all the .csv files. These follow this structure:
 #   distance,frequency
