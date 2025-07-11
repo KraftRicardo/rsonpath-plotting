@@ -4,7 +4,10 @@ import numpy as np
 import os
 
 
-def plot(input_dir_path: str, omit_labels: bool = False):
+
+def plot(input_dir_path: str, result_dir_path: str, omit_labels: bool = False):
+    os.makedirs(result_dir_path, exist_ok=True)
+
     # Load CSVs
     build_df = pd.read_csv(f"{input_dir_path}/build.csv")
     query_df = pd.read_csv(f"{input_dir_path}/query.csv")
@@ -76,14 +79,15 @@ def plot(input_dir_path: str, omit_labels: bool = False):
 
             plt.grid(True)
             plt.tight_layout()
-            plt.savefig(f'{input_dir_path}/plots/{json_file}_query_{query_id}.png')
-            print(f"Generated: {input_dir_path}/plots/{json_file}_query_{query_id}.png")
+            save_path = f'{result_dir_path}/{json_file}_query_{query_id}.png'
+            plt.savefig(save_path)
+            print(f"Generated: {save_path}")
             plt.close()
 
     print("Done generating plots!")
 
 
-# Run with: python python/speed/plot_final.py
+# Run with: python src/speed/plot_final.py
 #
 # This function expects a build.csv and query.csv inside the "input_dir_path" directory with following structures:
 # build.csv:
@@ -105,7 +109,9 @@ def plot(input_dir_path: str, omit_labels: bool = False):
 # and save there all generated images. Set omit_labels=True if you want to suppress labels.
 if __name__ == "__main__":
     # Input
-    input_dir_path = ".a_extern_final_results/speed/final"
+    input_dir_path = "res/data/speed/server/final"
+    result_dir_path = "res/plots/speed/server/final"
     omit_labels = False
 
-    plot(input_dir_path=input_dir_path, omit_labels=omit_labels)
+    plot(input_dir_path, f"{result_dir_path}/labeled", False)
+    plot(input_dir_path, f"{result_dir_path}/unlabeled", True)

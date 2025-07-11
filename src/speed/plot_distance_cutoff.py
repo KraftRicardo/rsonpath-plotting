@@ -237,6 +237,8 @@ def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str,
 
 # Run with: python src/speed/plot_distance_cutoff.py
 #
+# Create plots for a JSON analysis that trys to understand the cutoff behavior.
+#
 # "data_dir_path" is the path to folder holding the to be plotted data. Per given cutoffs it expects a subdirectory
 # (named after the cutoff) that contains the .csv files with data (one .csv file per analyzed json file).
 # The .csv files have to follow this structure:
