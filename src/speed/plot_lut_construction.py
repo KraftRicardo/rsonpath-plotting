@@ -15,16 +15,18 @@ PLOT_COLORS = [
 
 AXIS_LABEL_FONT_SIZE = 14
 
+
 def to_pretty_name(column_name: str, column_suffix: str) -> str:
     res = column_name.removesuffix(column_suffix)
     res = res.replace('_', ' ')
     return res
 
 
-def plot_all(file_path: str) -> None:
+def plot_all(file_path: str, result_dir_path: str) -> None:
+    os.makedirs(result_dir_path, exist_ok=True)
+
     directory, filename = os.path.split(file_path)
     file_base_name = os.path.splitext(filename)[0]
-    save_path = os.path.join(directory, f"{file_base_name}_combined_plot.png")
 
     df = pd.read_csv(file_path)
     df = df.sort_values(by='num_keys')
@@ -121,10 +123,12 @@ def plot_all(file_path: str) -> None:
     )
 
     plt.subplots_adjust(right=0.75)
+    save_path = os.path.join(result_dir_path, f"{file_base_name}_plot.png")
     plt.savefig(save_path)
     print(f"Generated: {save_path}")
 
-# Run with: python python/speed/plot_lut_construction.py
+
+# Run with: python src/speed/plot_lut_construction.py
 #
 # This function expects a file path to a "<FILENAME>.csv" with following structure:
 # build.csv:
@@ -137,6 +141,7 @@ def plot_all(file_path: str) -> None:
 # Then the code will create a plot .png image in the same folder named "<FILENAME>_combined_plot.png".
 if __name__ == "__main__":
     # Input
-    file_path = ".a_extern_final_results/speed/lut_construction/1 GB ptr_hash_solo/result.csv"
+    file_path = "res/data/speed/server/lut_construction/1 GB ptr_hash_solo/result.csv"
+    result_dir_path = "res/plots/speed/server/lut_construction/1 GB ptr_hash_solo"
 
-    plot_all(file_path)
+    plot_all(file_path, result_dir_path)

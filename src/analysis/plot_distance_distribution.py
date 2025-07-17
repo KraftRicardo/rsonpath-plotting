@@ -2,6 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 
 def plot_binned_frequencies(df: pd.DataFrame, directory: str, file_base_name: str) -> None:
@@ -91,12 +92,112 @@ def plot_binned_frequencies_short(df: pd.DataFrame, directory: str, file_base_na
     plt.close()
 
 
+def plot_binned_frequencies_64(df: pd.DataFrame, directory: str, file_base_name: str) -> None:
+    # Define bin edges (inclusive on both sides by offsetting)
+    bin_edges = [
+        1,  # bin 1: 0–1
+        2, 65,  # bin 2: 2–64
+        129, 193,
+        257, 321,
+        385, 449,
+        513, 577,
+        641, 705,
+        769, 833,
+        897, 961,
+        1025, 1089,
+        1153, 1217,
+        1281, 1345,
+        1409, 1473,
+        1537, 1601,
+        1665, 1729,
+        1793, 1857,
+        1921, 1985,
+        2049, float("inf")  # REST
+    ]
+    bin_labels = [
+        "1",
+        "2–64",
+        "65–128",
+        "129–192",
+        "193–256",
+        "257–320",
+        "321–384",
+        "385–448",
+        "449–512",
+        "513–576",
+        "577–640",
+        "641–704",
+        "705–768",
+        "769–832",
+        "833–896",
+        "897–960",
+        "961–1024",
+        "1025–1088",
+        "1089–1152",
+        "1153–1216",
+        "1217–1280",
+        "1281–1344",
+        "1345–1408",
+        "1409–1472",
+        "1473–1536",
+        "1537–1600",
+        "1601–1664",
+        "1665–1728",
+        "1729–1792",
+        "1793–1856",
+        "1857–1920",
+        "1921–1984",
+        "1985–2048",
+        "REST"
+    ]
+
+    # Create the bins (left AND right inclusive via workaround)
+    df['custom_bin'] = pd.cut(
+        df['distance'],
+        bins=bin_edges,
+        labels=bin_labels,
+        right=True,
+        include_lowest=True
+    )
+
+    binned_df = df.groupby('custom_bin', observed=False)['frequency'].sum().reset_index()
+    binned_df['frequency'] = binned_df['frequency'].fillna(0)
+
+    total_frequency = binned_df['frequency'].sum()
+    max_distance = df["distance"].max()
+    binned_df['percentage'] = (binned_df['frequency'] / total_frequency) * 100
+
+    # Plotting
+    plt.figure(figsize=(14, 8))
+    bars = plt.bar(binned_df['custom_bin'], binned_df['percentage'], color='mediumpurple')
+    plt.xticks(rotation=90)
+    plt.xlabel('Distance Bins')
+    plt.ylabel('Percentage of Total Frequency')
+    plt.title(f'Custom Distance Distribution in {file_base_name}\n'
+              f'Total Freq: {total_frequency}, Max Distance: {max_distance}')
+    plt.grid(True)
+
+    # Add frequency labels on bars
+    for bar, freq in zip(bars, binned_df['frequency']):
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width() / 2, height, f'{int(freq)}',
+                 ha='center', va='bottom', fontsize=9, color='black', rotation=90)
+
+    plt.tight_layout()
+    save_path = os.path.join(directory, f"{file_base_name}_custom.png")
+    plt.savefig(save_path)
+    print(f"Generated: {save_path}")
+    plt.close()
+
+
 def plot_all(data_dir_path: str, result_dir_path: str):
     # Create output directories
     plots_dir_path = os.path.join(result_dir_path, "plots")
-    plots_short_dir_path = os.path.join(result_dir_path, "plots_short")
     os.makedirs(plots_dir_path, exist_ok=True)
+    plots_short_dir_path = os.path.join(result_dir_path, "plots_short")
     os.makedirs(plots_short_dir_path, exist_ok=True)
+    custom_plots_dir_path = os.path.join(result_dir_path, "plots_64")
+    os.makedirs(custom_plots_dir_path, exist_ok=True)
 
     # Get all JSON files in the directory
     for filename in os.listdir(data_dir_path):
@@ -106,13 +207,12 @@ def plot_all(data_dir_path: str, result_dir_path: str):
             # Read the JSON file as a DataFrame
             df = pd.read_csv(file_path)
 
-            file_base_name = os.path.splitext(filename)[0]
-            base_name = file_base_name.removesuffix("_distances")
-
             # Call plotting functions
-            print(f"Process: {base_name}")
-            plot_binned_frequencies(df, plots_dir_path, base_name)
-            plot_binned_frequencies_short(df, plots_short_dir_path, base_name)
+            file_base_name = os.path.splitext(filename)[0].removesuffix("_distances")
+            print(f"Process: {file_base_name}")
+            # plot_binned_frequencies(df, plots_dir_path, file_base_name)
+            # plot_binned_frequencies_short(df, plots_short_dir_path, file_base_name)
+            plot_binned_frequencies_64(df, custom_plots_dir_path, file_base_name)
 
 
 # Run with: python src/analysis/plot_distance_distribution.py

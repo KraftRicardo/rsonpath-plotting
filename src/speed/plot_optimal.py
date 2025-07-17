@@ -21,8 +21,12 @@ def plot(
     lut_data['QUERY_ID'] = lut_data['QUERY_ID'].astype(str)
 
     # Merge the two dataframes on JSON and QUERY_ID to calculate the optimal time
-    merged_data = pd.merge(legacy_data, optimal_data[['JSON', 'QUERY_ID', 'CUTOFF', 'SKIP_TIME_NANO_SECONDS']],
-                           on=['JSON', 'QUERY_ID'], how='left')
+    merged_data = pd.merge(
+        legacy_data,
+        optimal_data[['JSON', 'QUERY_ID', 'SKIP_TIME_NANO_SECONDS']],
+        on=['JSON', 'QUERY_ID'],
+        how='left'
+    )
 
     # Calculate the optimal query time (OPTIMAL_TIME)
     merged_data['OPTIMAL_TIME'] = merged_data['QUERY_TIME_SECONDS'] - (merged_data['SKIP_TIME_NANO_SECONDS'] / 1e9)
@@ -31,7 +35,7 @@ def plot(
     os.makedirs(result_dir, exist_ok=True)
 
     # Create a colormap with enough distinct colors for the given cutoff values
-    cmap = plt.cm.get_cmap('tab20', len(cutoffs))  # Using 'tab20' colormap
+    cmap = plt.cm.get_cmap('tab20', len(cutoffs)) # Using 'tab20' colormap
     colors = [cmap(i) for i in range(len(cutoffs))]
 
     # Create a plot for each JSON
@@ -58,26 +62,22 @@ def plot(
             sorted_query_ids = group['QUERY_ID'].unique()
 
         # --- Plot 1: Query Times (Line Plot) ---
-        group_sorted = group.drop_duplicates(subset=['QUERY_ID', 'CUTOFF'])
-        group_sorted = group_sorted.set_index(['QUERY_ID', 'CUTOFF']).reindex(
-            pd.MultiIndex.from_product([sorted_query_ids, cutoffs], names=['QUERY_ID', 'CUTOFF'])
-        ).reset_index()
+        group_sorted = group.drop_duplicates(subset=['QUERY_ID'])
+        group_sorted = group_sorted.set_index('QUERY_ID').reindex(sorted_query_ids).reset_index()
 
         # Original legacy time
         ax[0].plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'], marker='o', linestyle='-', color='red',
                    label='Original Query Time')
 
-        # Optimal time (dashed lines)
-        # for i, cutoff in enumerate(cutoffs):
-        #     cutoff_group = group_sorted[group_sorted['CUTOFF'] == cutoff]
-        #     ax[0].plot(
-        #         cutoff_group['QUERY_ID'],
-        #         cutoff_group['OPTIMAL_TIME'],
-        #         marker='o',
-        #         linestyle='--',
-        #         color=colors[i],
-        #         label=f'Optimal Time (CUTOFF={cutoff})'
-        #     )
+        # Optimal time (dashed line)
+        ax[0].plot(
+            group_sorted['QUERY_ID'],
+            group_sorted['OPTIMAL_TIME'],
+            marker='o',
+            linestyle='--',
+            color='red',
+            label='Optimal Time'
+        )
 
         # LUT time (solid lines)
         lut_subset = lut_data[lut_data['JSON'] == json_name]
@@ -109,13 +109,13 @@ def plot(
 
 import pandas as pd
 
-# Run with: python python/speed/plot_optimal.py
+# Run with: python src/speed/plot_optimal.py
 #
 # This code expects following structure for the given .csv files:
 # optimal_time_csv:
-#   JSON,CUTOFF,QUERY_ID,QUERY_TEXT,SKIP_TIME_NANO_SECONDS
-#   crossref1_(551MB),0,1,$.items[2].resource.primary.URL,66067533.6
-#   crossref1_(551MB),64,1,$.items[2].resource.primary.URL,66067022.6
+#   JSON,QUERY_ID,QUERY_TEXT,SKIP_TIME_NANO_SECONDS
+#   crossref1_(551MB),1,$.items[2].resource.primary.URL,66067533.6
+#   crossref1_(551MB),1,$.items[2].resource.primary.URL,66067022.6
 #   ...
 # rq_legacy_time_csv:
 #   JSON,QUERY_ID,QUERY_TEXT,QUERY_TIME_SECONDS
@@ -139,15 +139,14 @@ import pandas as pd
 # "cutoffs" defines which cutoff will be covered in the plots
 if __name__ == "__main__":
     # Input
-    optimal_time_csv = ".a_extern_final_results/speed/optimal/optimal_time.csv"
-    rq_legacy_time_csv = ".a_extern_final_results/speed/optimal/rq-legacy_time.csv"
-    rq_lut_time_csv = ".a_extern_final_results/speed/optimal/rq-lut_time.csv"
-    result_dir = ".a_extern_final_results/speed/optimal"
-    counter_folder = ".a_extern_final_results/analysis/skip_counter"
+    optimal_time_csv = "res/data/speed/server/optimal/optimal_time.csv"
+    rq_legacy_time_csv = "res/data/speed/server/optimal/rq-legacy_time.csv"
+    rq_lut_time_csv = "res/data/speed/server/optimal/rq-lut_time.csv"
+    result_dir = "res/plots/speed/server/optimal"
+    counter_folder = "res/data/analysis/skip_counter"
 
-    # cutoffs = [0, 64, 128, 512, 2048]
-    # cutoffs = [0]
-    # cutoffs = [0, 64, 128, 1099511627776]
-    cutoffs = [0, 1099511627776]
+    # cutoffs = [0, 1099511627776]
+    # cutoffs = [0, 64, 128, 512, 8192]
+    cutoffs = [0, 64, 128, 512, 8192, 1099511627776]
 
     plot(optimal_time_csv, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)
