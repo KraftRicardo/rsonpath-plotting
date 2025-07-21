@@ -95,8 +95,8 @@ def plot_binned_frequencies_short(df: pd.DataFrame, directory: str, file_base_na
 def plot_binned_frequencies_64(df: pd.DataFrame, directory: str, file_base_name: str) -> None:
     # Define bin edges (inclusive on both sides by offsetting)
     bin_edges = [
-        1,  # bin 1: 0–1
-        2, 65,  # bin 2: 2–64
+        2,  # bin 1: 0–1
+        3, 65,  # bin 2: 2–64
         129, 193,
         257, 321,
         385, 449,
@@ -196,8 +196,8 @@ def plot_all(data_dir_path: str, result_dir_path: str):
     os.makedirs(plots_dir_path, exist_ok=True)
     plots_short_dir_path = os.path.join(result_dir_path, "plots_short")
     os.makedirs(plots_short_dir_path, exist_ok=True)
-    custom_plots_dir_path = os.path.join(result_dir_path, "plots_64")
-    os.makedirs(custom_plots_dir_path, exist_ok=True)
+    plot_64_dir_path = os.path.join(result_dir_path, "plots_64")
+    os.makedirs(plot_64_dir_path, exist_ok=True)
 
     # Get all JSON files in the directory
     for filename in os.listdir(data_dir_path):
@@ -210,9 +210,9 @@ def plot_all(data_dir_path: str, result_dir_path: str):
             # Call plotting functions
             file_base_name = os.path.splitext(filename)[0].removesuffix("_distances")
             print(f"Process: {file_base_name}")
-            # plot_binned_frequencies(df, plots_dir_path, file_base_name)
-            # plot_binned_frequencies_short(df, plots_short_dir_path, file_base_name)
-            plot_binned_frequencies_64(df, custom_plots_dir_path, file_base_name)
+            plot_binned_frequencies(df, plots_dir_path, file_base_name)
+            plot_binned_frequencies_short(df, plots_short_dir_path, file_base_name)
+            plot_binned_frequencies_64(df, plot_64_dir_path, file_base_name)
 
 
 # Run with: python src/analysis/plot_distance_distribution.py
