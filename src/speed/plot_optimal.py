@@ -147,6 +147,7 @@ if __name__ == "__main__":
 
     # cutoffs = [0, 1099511627776]
     # cutoffs = [0, 64, 128, 512, 8192]
-    cutoffs = [0, 64, 128, 512, 8192, 1099511627776]
+    # cutoffs = [0, 64, 128, 512, 8192, 1099511627776]
+    cutoffs = [512, 8192]
 
     plot(optimal_time_csv, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)
