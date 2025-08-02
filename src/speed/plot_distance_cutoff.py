@@ -262,7 +262,7 @@ def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str,
 # "cutoffs" is a list that defines which cutoffs you are interested in plotting.
 if __name__ == "__main__":
     # Input
-    data_dir_path = "res/data/speed/server/lut_ptrhash_double_empty_list_opt"
+    data_dir_path = "res/data/speed/server/distance_cutoff"
     counter_dir_path = "res/data/analysis/skip_counter"
     top_image_dir_path = "res/plots/analysis/distance_distribution/plots"
     result_dir_path = "res/plots/speed/server/distance_cutoff"

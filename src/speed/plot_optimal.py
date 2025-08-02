@@ -35,7 +35,7 @@ def plot(
     os.makedirs(result_dir, exist_ok=True)
 
     # Create a colormap with enough distinct colors for the given cutoff values
-    cmap = plt.cm.get_cmap('tab20', len(cutoffs)) # Using 'tab20' colormap
+    cmap = plt.cm.get_cmap('tab20', len(cutoffs))  # Using 'tab20' colormap
     colors = [cmap(i) for i in range(len(cutoffs))]
 
     # Create a plot for each JSON
@@ -140,10 +140,11 @@ import pandas as pd
 if __name__ == "__main__":
     # Input
     optimal_time_csv = "res/data/speed/server/optimal/optimal_time.csv"
-    rq_legacy_time_csv = "res/data/speed/server/optimal/rq-legacy_time.csv"
-    rq_lut_time_csv = "res/data/speed/server/optimal/rq-lut_time.csv"
+    rq_legacy_time_csv = "res/data/speed/server/optimal/rq_legacy_time.csv"
+    rq_lut_time_csv = "res/data/speed/server/optimal/rq_lut_time.csv"
     result_dir = "res/plots/speed/server/optimal"
-    counter_folder = "res/data/analysis/skip_counter"
+    # counter_folder = "res/data/analysis/skip_counter"
+    counter_folder = "res/data/analysis/query"
 
     # cutoffs = [0, 1099511627776]
     # cutoffs = [0, 64, 128, 512, 8192]

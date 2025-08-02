@@ -25,7 +25,12 @@ def extract_size(json_name: str) -> float:
     return size * 1024 if unit == "GB" else size
 
 
-def plot_build(data_dir_path: str, cutoffs):
+def plot_build(data_dir_path: str, result_dir: str, cutoffs):
+    # Output images
+    os.makedirs(result_dir, exist_ok=True)
+    build_time_png_path = os.path.join(result_dir, "build_time.png")
+    size_png_path = os.path.join(result_dir, "size.png")
+
     all_build_times = []
     all_sizes = []
 
@@ -50,10 +55,7 @@ def plot_build(data_dir_path: str, cutoffs):
     build_df = pd.concat(all_build_times).sort_values("JSON_SIZE_SORT")
     size_df = pd.concat(all_sizes).sort_values("JSON_SIZE_SORT")
 
-    plots_path = os.path.join(data_dir_path, "plots")
-    os.makedirs(plots_path, exist_ok=True)
-
-    sns.set(style="whitegrid")
+    sns.set_theme(style="whitegrid")
     sorted_cutoffs = [str(c) for c in sorted(cutoffs)]
 
     # Truncate color palette if needed
@@ -74,9 +76,8 @@ def plot_build(data_dir_path: str, cutoffs):
     plt.title("Build Time per JSON File by Cutoff")
     plt.tight_layout(rect=[0, 0, 0.85, 1])
     ax.legend(title="Cutoff", bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
-    path = os.path.join(plots_path, "build_time.png")
-    plt.savefig(path)
-    print(f"Generated {path}")
+    plt.savefig(build_time_png_path)
+    print(f"Generated {build_time_png_path}")
     plt.close()
 
     # --- Plot: Size in MB ---
@@ -94,13 +95,13 @@ def plot_build(data_dir_path: str, cutoffs):
     plt.title("LUT Size in MB per JSON File by Cutoff")
     plt.tight_layout(rect=[0, 0, 0.85, 1])
     ax.legend(title="Cutoff", bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0)
-    path = os.path.join(plots_path, "size.png")
-    plt.savefig(path)
-    print(f"Generated {path}")
+    plt.savefig(size_png_path)
+    print(f"Generated {size_png_path}")
     plt.close()
 
 
-# Run with: python python/speed/plot_ptrhash_double_empty_list_opt.py
+# Run with: python src/speed/plot_distance_cutoff_sizes.py
+# Run with: python src/speed/plot_ptrhash_double_empty_list_opt.py
 #
 # This function expects a "dir_path" to the directory holding all the data. Per given cutoffs it expects a subdirectory
 # (named after the cutoff) that contains the .csv with data.
@@ -117,7 +118,8 @@ def plot_build(data_dir_path: str, cutoffs):
 # size.png plots. Adapt "dir_path" and the "cutoffs" list to your wishes.
 if __name__ == "__main__":
     # Input
-    dir_path = ".a_extern_final_results/speed/lut_ptrhash_double_empty_list_opt"
-    cutoffs = [64, 128, 192, 256, 320, 384, 448, 512, 1024, 2048, 4096, 8192]
+    dir_path = "res/data/speed/server/distance_cutoff"
+    result_dir = "res/plots/speed/server/distance_cutoff_sizes"
+    cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 1024, 2048, 4096, 8192]
 
-    plot_build(dir_path, cutoffs)
+    plot_build(dir_path, result_dir, cutoffs)

@@ -1,7 +1,7 @@
-import sys
 import os
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
 
 COLOR_1 = "#458AF5"
 COLOR_2 = "#F5BA45"
