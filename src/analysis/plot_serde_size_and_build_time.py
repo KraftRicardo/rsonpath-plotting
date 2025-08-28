@@ -69,7 +69,7 @@ def plot(
     ax1.plot(names, ratio2, marker="o", label="IndexMap")
     ax1.set_title("Serde vs. JSON size", fontsize=title_fontsize)
     ax1.set_xlabel("JSON Size in MB", fontsize=label_fontsize)
-    ax1.set_ylabel("Size Ratio", fontsize=label_fontsize)
+    ax1.set_ylabel("Ratio: Serde/JSON Size", fontsize=label_fontsize)
     ax1.legend(fontsize=legend_fontsize)
     ax1.tick_params(axis='x', labelsize=tick_fontsize, rotation=45)
     ax1.tick_params(axis='y', labelsize=tick_fontsize)

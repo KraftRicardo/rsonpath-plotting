@@ -2,7 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
+
 
 def plot(df: pd.DataFrame, directory: str, file_base_name: str) -> None:
     # Sort by ascending SKIP_PERCENTAGE
@@ -10,7 +10,7 @@ def plot(df: pd.DataFrame, directory: str, file_base_name: str) -> None:
 
     # Plot
     plt.figure(figsize=(12, 6))
-    bars = plt.bar(df_sorted["QUERY_ID"].astype(str), df_sorted["SKIP_PERCENTAGE"], color="royalblue")
+    _ = plt.bar(df_sorted["QUERY_ID"].astype(str), df_sorted["SKIP_PERCENTAGE"], color="royalblue")
 
     # Labels and title
     plt.xlabel("Query ID")
