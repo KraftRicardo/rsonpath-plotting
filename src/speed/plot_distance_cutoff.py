@@ -241,7 +241,7 @@ def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str,
 
         plot_per_name(plots_dir_path, build_results, query_results, counter_csv_path, top_image_path, cutoffs)
 
-    # --- cleanup side effect directories ---
+    # Cleanup side effects
     for side_dir in [build_dir_path, query_dir_path]:
         if os.path.exists(side_dir):
             shutil.rmtree(side_dir)
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     # Input
     data_dir_path = "res/data/speed/server/distance_cutoff"
     counter_dir_path = "res/data/analysis/skip_counter"
-    top_image_dir_path = "res/plots/analysis/distance_distribution/plots"
+    top_image_dir_path = "res/plots/analysis/distance_distribution_per_json/plots"
     result_dir_path = "res/plots/speed/server/distance_cutoff"
     cutoffs = [0, 64, 128, 512, 8192]
     # cutoffs = [0, 1, 2, 64, 128, 192, 256, 320, 384, 448, 512, 1024, 2048, 4096, 8192]

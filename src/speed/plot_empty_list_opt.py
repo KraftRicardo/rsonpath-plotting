@@ -71,7 +71,10 @@ def plot(
         print(f"Generated: {plot_filename}")
         plt.close()
 
-# Run with: python src/speed/plot_legacy_vs_legacy_empty_list_opt_off.py
+# Run with: python src/speed/plot_empty_list_opt.py
+#
+# Compares rq-legacy vs. rq-legacy with the empty-list-opt feature on. This is to see whether the effect of this feature
+# are significant.
 #
 # This code expects following structure for the given .csv files:
 # rq_legacy_time_csv and rq_legacy_empty_list_opt_off_time_csv:
@@ -92,7 +95,7 @@ if __name__ == "__main__":
     rq_legacy_time_csv = "res/data/speed/server/rq_legacy/rq_legacy_time_repetitions=10.csv"
     rq_legacy_empty_list_opt_off_time_csv = "res/data/speed/server/rq_legacy_empty_list_opt_off/rq_legacy_empty_list_opt_off_time_repetitions=10.csv"
     # rq_legacy_empty_list_opt_off_time_csv = "res/data/speed/server/rq_legacy2/rq_legacy_time.csv"
-    result_dir = "res/plots/speed/server/legacy_vs_legacy_empty_list_opt_off"
+    result_dir = "res/plots/speed/server/empty_list_opt"
     counter_folder = "res/data/analysis/skip_counter"
 
     plot(rq_legacy_time_csv, rq_legacy_empty_list_opt_off_time_csv, counter_folder, result_dir)
