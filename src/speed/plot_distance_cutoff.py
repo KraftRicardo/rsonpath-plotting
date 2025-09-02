@@ -4,6 +4,7 @@ from collections import defaultdict
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import pandas as pd
+import shutil
 
 # Custom color palette
 PLOT_COLORS = [
@@ -16,7 +17,8 @@ PLOT_COLORS = [
 ]
 
 
-def plot_per_name(plots_dir_path: str, build_csv_path: str, query_csv_path: str, counter_csv_path: str, top_image_path, cutoffs):
+def plot_per_name(plots_dir_path: str, build_csv_path: str, query_csv_path: str, counter_csv_path: str, top_image_path,
+                  cutoffs):
     # Create result folder
     os.makedirs(plots_dir_path, exist_ok=True)
 
@@ -89,7 +91,9 @@ def plot_per_name(plots_dir_path: str, build_csv_path: str, query_csv_path: str,
     ax1.set_ylabel("Relative Query Time")
     ax1.set_title("Relative Query Time by Query ID (Normalized to CUTOFF=0)")
     ax1.grid(True)
-    ax1.set_xticklabels(group["QUERY_ID"].astype(str), rotation=90, fontsize=9)
+    x_labels = query_df["QUERY_ID"].astype(str).unique()
+    ax1.set_xticks(range(len(x_labels)))
+    ax1.set_xticklabels(x_labels, rotation=90, fontsize=9)
 
     # --- Plot 2: Build Time ---
     ax2 = fig.add_subplot(2, 2, 2)
@@ -114,6 +118,7 @@ def plot_per_name(plots_dir_path: str, build_csv_path: str, query_csv_path: str,
     ax3.set_xlabel("Query ID")
     ax3.set_ylabel("Total Percent Skip (%)")
     ax3.set_title("Total Percent Skip by Query ID")
+    ax3.set_xticks(range(len(counter_df["QUERY_NAME"])))
     ax3.set_xticklabels(counter_df["QUERY_NAME"], rotation=90, fontsize=9)
 
     # --- Plot 4: Size in MB ---
@@ -210,13 +215,14 @@ def collect_query(result_dir_path, cutoffs, query_dir_path):
         df.to_csv(output_path, index=False)
         print(f"Wrote: {output_path}")
 
+
 def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str, result_dir_path: str, cutoffs):
     os.makedirs(result_dir_path, exist_ok=True)
 
     print("Collecting data in one big csv")
     build_dir_path = f"{result_dir_path}/builds_by_json"
     query_dir_path = f"{result_dir_path}/queries_by_json"
-    plots_dir_path = f"{result_dir_path}/plots"
+    plots_dir_path = f"{result_dir_path}"
     collect_build(data_dir_path, cutoffs, build_dir_path)
     collect_query(data_dir_path, cutoffs, query_dir_path)
 
@@ -234,6 +240,13 @@ def plot_all(data_dir_path: str, counter_dir_path: str, top_image_dir_path: str,
         top_image_path = f"{top_image_dir_path}/{name}.png"
 
         plot_per_name(plots_dir_path, build_results, query_results, counter_csv_path, top_image_path, cutoffs)
+
+    # --- cleanup side effect directories ---
+    for side_dir in [build_dir_path, query_dir_path]:
+        if os.path.exists(side_dir):
+            shutil.rmtree(side_dir)
+            print(f"Deleted side effect directory: {side_dir}")
+
 
 # Run with: python src/speed/plot_distance_cutoff.py
 #
@@ -270,4 +283,3 @@ if __name__ == "__main__":
     # cutoffs = [0, 1, 2, 64, 128, 192, 256, 320, 384, 448, 512, 1024, 2048, 4096, 8192]
 
     plot_all(data_dir_path, counter_dir_path, top_image_dir_path, result_dir_path, cutoffs)
-

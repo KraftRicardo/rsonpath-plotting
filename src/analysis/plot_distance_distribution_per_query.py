@@ -13,10 +13,10 @@ def plot_binned_frequencies(df: pd.DataFrame, result_dir_path: str, file_base_na
 
     # Build bins
     bin_edges = [0] + [2 ** i for i in range(1, 41)]
-    df['binned_distance'] = pd.cut(df['distance'], bins=bin_edges, right=False, include_lowest=True)
+    df['binned_distance'] = pd.cut(df['DISTANCE'], bins=bin_edges, right=False, include_lowest=True)
 
     # Aggregate by binned distance and skip_type
-    binned_df = df.groupby(['binned_distance', 'skip_type'], observed=False)['frequency'].sum().unstack(
+    binned_df = df.groupby(['binned_distance', 'SKIP_TYPE'], observed=False)['FREQUENCY'].sum().unstack(
         fill_value=0).reset_index()
 
     # Compute total frequency for percentages
@@ -158,7 +158,7 @@ def plot_binned_frequencies_64(df: pd.DataFrame, result_dir_path: str, file_base
 
     # Bin distances
     df['custom_bin'] = pd.cut(
-        df['distance'],
+        df['DISTANCE'],
         bins=bin_edges,
         labels=bin_labels,
         right=True,
@@ -166,7 +166,7 @@ def plot_binned_frequencies_64(df: pd.DataFrame, result_dir_path: str, file_base
     )
 
     # Group and aggregate
-    binned_df = df.groupby(['custom_bin', 'skip_type'], observed=False)['frequency'].sum().unstack(
+    binned_df = df.groupby(['custom_bin', 'SKIP_TYPE'], observed=False)['FREQUENCY'].sum().unstack(
         fill_value=0).reset_index()
 
     total_frequency = binned_df.get('lut', pd.Series(0)).sum() + binned_df.get('ite', pd.Series(0)).sum()
@@ -235,6 +235,11 @@ def plot_all(data_dir_path: str, result_dir_path: str):
             file_base_name = os.path.splitext(filename)[0]
 
             df = pd.read_csv(file_path)
+            # Skip if CSV is empty
+            if df.empty:
+                print(f"Skipping empty file: {filename}")
+                continue
+
             name = file_base_name.removesuffix("_distances")
             plot_binned_frequencies(df, plots_dir_path, name)
             plot_binned_frequencies_64(df, plot_64_dir_path, name)
