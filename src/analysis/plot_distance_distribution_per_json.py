@@ -215,7 +215,7 @@ def plot_all(data_dir_path: str, result_dir_path: str):
             plot_binned_frequencies_64(df, plot_64_dir_path, file_base_name)
 
 
-# Run with: python src/analysis/plot_distance_distribution.py
+# Run with: python src/analysis/plot_distance_distribution_per_json.py
 #
 # Plot the distance distribution of their brackets for individual JSON files.
 #
@@ -228,7 +228,7 @@ def plot_all(data_dir_path: str, result_dir_path: str):
 # There is one .csv file per analyzed JSON so the csv should be named after the analyzed JSON file.
 if __name__ == "__main__":
     # Input
-    data_dir_path = "res/data/analysis/distance_distribution"
-    result_dir_path = "res/plots/analysis/distance_distribution"
+    data_dir_path = "res/data/analysis/distance_distribution_per_json"
+    result_dir_path = "res/plots/analysis/distance_distribution_per_json"
 
     plot_all(data_dir_path, result_dir_path)
