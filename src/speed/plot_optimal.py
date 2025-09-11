@@ -1,29 +1,30 @@
 import os
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def plot(
-        optimal_time_csv: str,
+        rq_legacy_skip_time: str,
         rq_legacy_time_csv: str,
         rq_lut_time_csv: str,
         counter_folder: str,
         cutoffs: list,
         result_dir: str,
 ):
-    optimal_data = pd.read_csv(optimal_time_csv)
+    legacy_skip_data = pd.read_csv(rq_legacy_skip_time)
     legacy_data = pd.read_csv(rq_legacy_time_csv)
     lut_data = pd.read_csv(rq_lut_time_csv)
 
     # Convert QUERY_ID to string type to treat as categorical data
     legacy_data['QUERY_ID'] = legacy_data['QUERY_ID'].astype(str)
-    optimal_data['QUERY_ID'] = optimal_data['QUERY_ID'].astype(str)
+    legacy_skip_data['QUERY_ID'] = legacy_skip_data['QUERY_ID'].astype(str)
     lut_data['QUERY_ID'] = lut_data['QUERY_ID'].astype(str)
 
     # Merge the two dataframes on JSON and QUERY_ID to calculate the optimal time
     merged_data = pd.merge(
         legacy_data,
-        optimal_data[['JSON', 'QUERY_ID', 'SKIP_TIME_NANO_SECONDS']],
+        legacy_skip_data[['JSON', 'QUERY_ID', 'SKIP_TIME_NANO_SECONDS']],
         on=['JSON', 'QUERY_ID'],
         how='left'
     )
@@ -43,15 +44,15 @@ def plot(
         fig, ax = plt.subplots(2, 1, figsize=(10, 12))  # 2 rows, 1 column
 
         # --- Plot 2: Skip Percentages (Bar Plot) ---
-        counter_file = os.path.join(counter_folder, f"COUNTER_{json_name}.csv")
+        counter_file = os.path.join(counter_folder, f"{json_name}.csv")
 
         if os.path.exists(counter_file):
             counter_data = pd.read_csv(counter_file)
-            counter_data['QUERY_NAME'] = counter_data['QUERY_NAME'].astype(str)
-            counter_data_sorted = counter_data.sort_values(by='TOTAL_PERCENT_SKIP', ascending=True)
+            counter_data['QUERY_ID'] = counter_data['QUERY_ID'].astype(str)
+            counter_data_sorted = counter_data.sort_values(by='SKIP_PERCENTAGE', ascending=True)
 
-            ax[1].bar(counter_data_sorted['QUERY_NAME'], counter_data_sorted['TOTAL_PERCENT_SKIP'])
-            sorted_query_ids = counter_data_sorted['QUERY_NAME'].values
+            ax[1].bar(counter_data_sorted['QUERY_ID'], counter_data_sorted['SKIP_PERCENTAGE'])
+            sorted_query_ids = counter_data_sorted['QUERY_ID'].values
 
             ax[1].set_title(f'Skip Percentage per Query ID for {json_name}')
             ax[1].set_xlabel('Query ID')
@@ -107,8 +108,6 @@ def plot(
         plt.close()
 
 
-import pandas as pd
-
 # Run with: python src/speed/plot_optimal.py
 #
 # This code expects following structure for the given .csv files:
@@ -139,16 +138,14 @@ import pandas as pd
 # "cutoffs" defines which cutoff will be covered in the plots
 if __name__ == "__main__":
     # Input
-    optimal_time_csv = "res/data/speed/server/optimal/optimal_time.csv"
-    rq_legacy_time_csv = "res/data/speed/server/optimal/rq_legacy_time.csv"
-    rq_lut_time_csv = "res/data/speed/server/optimal/rq_lut_time.csv"
+    rq_legacy_skip_time = "res/data/speed/server/rq_legacy_skip_time/query_count/rq_legacy_skip_time_repetitions=1.csv"
+    rq_legacy_time_csv = "res/data/speed/server/rq_legacy/query_count/rq_legacy_time_repetitions=1.csv"
+    rq_lut_time_csv = "res/data/speed/server/rq_lut/query_count/rq_lut_time_repetitions=20.csv"
     result_dir = "res/plots/speed/server/optimal"
-    # counter_folder = "res/data/analysis/skip_counter"
     counter_folder = "res/data/analysis/query"
 
     # cutoffs = [0, 1099511627776]
-    # cutoffs = [0, 64, 128, 512, 8192]
+    cutoffs = [0, 64]
     # cutoffs = [0, 64, 128, 512, 8192, 1099511627776]
-    cutoffs = [512, 8192]
-
-    plot(optimal_time_csv, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)
+    # cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 1024, 2048, 4096, 8192, 1099511627776]
+    plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)
