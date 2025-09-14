@@ -20,6 +20,7 @@ def plot(
     legacy_data['QUERY_ID'] = legacy_data['QUERY_ID'].astype(str)
     legacy_skip_data['QUERY_ID'] = legacy_skip_data['QUERY_ID'].astype(str)
     lut_data['QUERY_ID'] = lut_data['QUERY_ID'].astype(str)
+    lut_data['QUERY_TIME_SECONDS'] = pd.to_numeric(lut_data['QUERY_TIME_SECONDS'], errors='coerce')
 
     # Merge the two dataframes on JSON and QUERY_ID to calculate the optimal time
     merged_data = pd.merge(
@@ -36,7 +37,7 @@ def plot(
     os.makedirs(result_dir, exist_ok=True)
 
     # Create a colormap with enough distinct colors for the given cutoff values
-    cmap = plt.cm.get_cmap('tab20', len(cutoffs))  # Using 'tab20' colormap
+    cmap = plt.colormaps.get_cmap('tab20', len(cutoffs))  # Using 'tab20' colormap
     colors = [cmap(i) for i in range(len(cutoffs))]
 
     # Create a plot for each JSON
@@ -83,7 +84,7 @@ def plot(
         # LUT time (solid lines)
         lut_subset = lut_data[lut_data['JSON'] == json_name]
         for i, cutoff in enumerate(cutoffs):
-            lut_cutoff_group = lut_subset[lut_subset['CUTOFF'] == cutoff]
+            lut_cutoff_group = lut_subset[lut_subset['CUTOFF'] == f"{cutoff}"]
             lut_cutoff_group = lut_cutoff_group.set_index('QUERY_ID').reindex(sorted_query_ids).reset_index()
             ax[0].plot(
                 lut_cutoff_group['QUERY_ID'],
@@ -102,7 +103,7 @@ def plot(
         ax[0].legend()
 
         plt.tight_layout()
-        plot_filename = os.path.join(result_dir, f"{json_name}_combined_plot.png")
+        plot_filename = os.path.join(result_dir, f"{json_name}_count.png")
         plt.savefig(plot_filename)
         print(f"Generated: {plot_filename}")
         plt.close()
@@ -128,9 +129,10 @@ def plot(
 #   ...
 # "counter_folder" is the path to the folder that contains the skip-counter information in .csv files with this
 # structure:
-#   FILENAME,QUERY_NAME,LUT_PERCENT_SKIP,ITE_PERCENT_SKIP,TOTAL_PERCENT_SKIP,LUT_COUNT,ITE_COUNT,TOTAL_COUNT,LUT_DISTANCE,ITE_DISTANCE,TOTAL_DISTANCE,FILE_SIZE
-#   bestbuy_large_record_(1GB),1,0.999999,0.000000,0.999999,6,0,6,1044618238,0,1044618238,1044619305
-#   bestbuy_large_record_(1GB),2,0.827555,0.000000,0.827555,363995,0,363995,864479540,0,864479540,1044619305
+#   QUERY_ID,QUERY_TEXT,RESULT,SKIP_PERCENTAGE
+#   1,$..freeShipping,230089,0
+#   2,$.products[*].videoChapters,769,0.09227438889806847
+#   3,$.products[*].additionalFeatures[*],61098,0.10084738573733328
 #   ...
 # the name of this .csv is "COUNTER_bestbuy_large_record_(1GB).csv" and there needs to be one .csv per different JSON
 # that was analyzed.
@@ -138,14 +140,15 @@ def plot(
 # "cutoffs" defines which cutoff will be covered in the plots
 if __name__ == "__main__":
     # Input
-    rq_legacy_skip_time = "res/data/speed/server/rq_legacy_skip_time/query_count/rq_legacy_skip_time_repetitions=1.csv"
-    rq_legacy_time_csv = "res/data/speed/server/rq_legacy/query_count/rq_legacy_time_repetitions=1.csv"
+    rq_legacy_skip_time = "res/data/speed/server/rq_legacy_skip_time/query_count/rq_legacy_skip_time_repetitions=20.csv"
+    rq_legacy_time_csv = "res/data/speed/server/rq_legacy/query_count/rq_legacy_time_repetitions=20.csv"
     rq_lut_time_csv = "res/data/speed/server/rq_lut/query_count/rq_lut_time_repetitions=20.csv"
     result_dir = "res/plots/speed/server/optimal"
     counter_folder = "res/data/analysis/query"
 
-    # cutoffs = [0, 1099511627776]
-    cutoffs = [0, 64]
-    # cutoffs = [0, 64, 128, 512, 8192, 1099511627776]
     # cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 1024, 2048, 4096, 8192, 1099511627776]
+    # cutoffs = [0, 640, 1024]
+    # cutoffs = [1024]
+    # cutoffs = [1099511627776]
+    cutoffs = [4096, 8192,]
     plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)
