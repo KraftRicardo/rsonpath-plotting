@@ -113,15 +113,18 @@ def plot(
 
 
 # Run with: python src/speed/plot_optimal_node.py
+#
+# Same definition as plot_optimal only that we use node mode here so we can compare with serde actually
 if __name__ == "__main__":
     # Input
     rq_legacy_skip_time = "res/data/speed/server/rq_legacy_skip_time/query_count/rq_legacy_skip_time_repetitions=20.csv"
     rq_legacy_time_csv = "res/data/speed/server/rq_legacy/query_node/rq_legacy_time_node_repetitions=20.csv"
     rq_lut_time_csv = "res/data/speed/server/rq_lut/query_node/rq_lut_time_node_repetitions=20.csv"
-    rq_serde_time_csv = "res/data/speed/server/serde/serde_time_repetitions=20.csv"  # NEW
+    rq_serde_time_csv = "res/data/speed/server/serde/serde_time_repetitions=20.csv"
     result_dir = "res/plots/speed/server/optimal_node"
     counter_folder = "res/data/analysis/query"
 
     # cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 1024, 2048, 4096, 8192, 1099511627776]
-    cutoffs = [0, 1024]
+    # cutoffs = [0, 640, 1024]
+    cutoffs = []
     plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, rq_serde_time_csv, counter_folder, cutoffs, result_dir)
