@@ -27,15 +27,14 @@ def plot(
         group_2 = legacy_data_2[legacy_data_2['JSON'] == json_name]
 
         # --- Plot 2: Skip Percentages ---
-        counter_file = os.path.join(counter_folder, f"COUNTER_{json_name}.csv")
-
+        counter_file = os.path.join(counter_folder, f"{json_name}.csv")
         if os.path.exists(counter_file):
             counter_data = pd.read_csv(counter_file)
-            counter_data['QUERY_NAME'] = counter_data['QUERY_NAME'].astype(str)
-            counter_data_sorted = counter_data.sort_values(by='TOTAL_PERCENT_SKIP', ascending=True)
-            sorted_query_ids = counter_data_sorted['QUERY_NAME'].values
+            counter_data['QUERY_ID'] = counter_data['QUERY_ID'].astype(str)
+            counter_data_sorted = counter_data.sort_values(by='SKIP_PERCENTAGE', ascending=True)
+            sorted_query_ids = counter_data_sorted['QUERY_ID'].values
 
-            ax[1].bar(counter_data_sorted['QUERY_NAME'], counter_data_sorted['TOTAL_PERCENT_SKIP'])
+            ax[1].bar(counter_data_sorted['QUERY_ID'], counter_data_sorted['SKIP_PERCENTAGE'])
             ax[1].set_title(f'Skip Percentage per Query ID for {json_name}')
             ax[1].set_xlabel('Query ID')
             ax[1].set_ylabel('Skip Percentage')
@@ -73,29 +72,46 @@ def plot(
 
 # Run with: python src/speed/plot_empty_list_opt.py
 #
-# Compares rq-legacy vs. rq-legacy with the empty-list-opt feature on. This is to see whether the effect of this feature
-# are significant.
+# This script compares query execution times between:
+#   1. rq-legacy (with empty-list optimization enabled), and
+#   2. rq-legacy (with empty-list optimization explicitly disabled).
 #
-# This code expects following structure for the given .csv files:
-# rq_legacy_time_csv and rq_legacy_empty_list_opt_off_time_csv:
-#   JSON,QUERY_ID,QUERY_TEXT,QUERY_TIME_SECONDS
-#   crossref1_(551MB),1,$.items[2].resource.primary.URL,0.13103
-#   crossref1_(551MB),2,$.items[*].URL,0.13692
-#   ...
-# "counter_folder" is the path to the folder that contains the skip-counter information in .csv files with this
-# structure:
-#   FILENAME,QUERY_NAME,LUT_PERCENT_SKIP,ITE_PERCENT_SKIP,TOTAL_PERCENT_SKIP,LUT_COUNT,ITE_COUNT,TOTAL_COUNT,LUT_DISTANCE,ITE_DISTANCE,TOTAL_DISTANCE,FILE_SIZE
-#   bestbuy_large_record_(1GB),1,0.999999,0.000000,0.999999,6,0,6,1044618238,0,1044618238,1044619305
-#   bestbuy_large_record_(1GB),2,0.827555,0.000000,0.827555,363995,0,363995,864479540,0,864479540,1044619305
-#   ...
-# the name of this .csv is "COUNTER_bestbuy_large_record_(1GB).csv" and there needs to be one .csv per different JSON
-# that was analyzed.
-# "result_dir" is the path to the folder where the plots will be saved.
+# INPUTS:
+#   - rq_legacy_time_csv:
+#       CSV file containing query timings for rq-legacy with empty-list optimization ON.
+#       Expected columns: JSON, QUERY_ID, QUERY_TIME_SECONDS, REPETITIONS
+#       Example rows:
+#           JSON,QUERY_ID,QUERY_TIME_SECONDS,REPETITIONS
+#           bestbuy_large_record_(1GB),1,1.39657,20
+#           bestbuy_large_record_(1GB),2,0.12507,20
+#
+#   - rq_legacy_empty_list_opt_off_time_csv:
+#       CSV file containing query timings for rq-legacy with empty-list optimization OFF.
+#       Same format and JSON/QUERY_IDs as above.
+#
+#   - counter_folder:
+#       Directory with per-JSON CSV files containing skip statistics.
+#       Each file is named <JSON>.csv and must contain columns:
+#           QUERY_ID, SKIP_PERCENTAGE
+#
+#   - result_dir:
+#       Directory where the output plots will be saved. Will be created if it doesn’t exist.
+#
+# OUTPUT:
+#   For each JSON value in the input CSVs, one PNG file is generated in result_dir:
+#       <JSON>_combined_plot.png
+#
+#   Each figure has two rows:
+#       Row 1: Line plot of query execution times:
+#              - Red solid line with circles = rq-legacy (default, opt ON)
+#              - Blue solid line with circles = rq-legacy (empty-list-opt OFF)
+#       Row 2: Bar plot of skip percentage per query (if counter data is available).
+#
+# This allows direct comparison of the effect of disabling empty-list optimization.
 if __name__ == "__main__":
-    rq_legacy_time_csv = "res/data/speed/server/rq_legacy/rq_legacy_time_repetitions=10.csv"
-    rq_legacy_empty_list_opt_off_time_csv = "res/data/speed/server/rq_legacy_empty_list_opt_off/rq_legacy_empty_list_opt_off_time_repetitions=10.csv"
-    # rq_legacy_empty_list_opt_off_time_csv = "res/data/speed/server/rq_legacy2/rq_legacy_time.csv"
+    rq_legacy_time_csv = "res/data/speed/server/rq_legacy/query_count/rq_legacy_time_repetitions=20.csv"
+    rq_legacy_empty_list_opt_off_time_csv = "res/data/speed/server/rq_legacy_empty_list_opt_off/rq_legacy_empty_list_opt_off_time_repetitions=20.csv"
     result_dir = "res/plots/speed/server/empty_list_opt"
-    counter_folder = "res/data/analysis/skip_counter"
+    counter_folder = "res/data/analysis/query"
 
     plot(rq_legacy_time_csv, rq_legacy_empty_list_opt_off_time_csv, counter_folder, result_dir)
