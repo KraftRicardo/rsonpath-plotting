@@ -8,6 +8,7 @@ def plot(
         rq_legacy_empty_list_opt_off_time_csv: str,
         counter_folder: str,
         result_dir: str,
+        second_label_name: str
 ):
     legacy_data = pd.read_csv(rq_legacy_time_csv)
     legacy_data_2 = pd.read_csv(rq_legacy_empty_list_opt_off_time_csv)
@@ -50,11 +51,11 @@ def plot(
 
         # Plot legacy
         ax[0].plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'],
-                   marker='o', linestyle='-', color='red', label='rq-legacy')
+                   marker='o', linestyle=':', color='red', label='rq-legacy')
 
         # Plot legacy (empty list opt OFF)
         ax[0].plot(group_2_sorted['QUERY_ID'], group_2_sorted['QUERY_TIME_SECONDS'],
-                   marker='o', linestyle='-', color='blue', label='rq-legacy (empty-list-opt: OFF)')
+                   marker='o', linestyle=':', color='blue', label=second_label_name)
 
         ax[0].set_title(f'Query Time Comparison for {json_name}')
         ax[0].set_xlabel('QUERY_ID')
@@ -73,21 +74,25 @@ def plot(
 # Run with: python src/speed/plot_empty_list_opt.py
 #
 # This script compares query execution times between:
-#   1. rq-legacy (with empty-list optimization enabled), and
-#   2. rq-legacy (with empty-list optimization explicitly disabled).
+#   1. rq-legacy (baseline run), and
+#   2. Another variant of the engine with a specific feature toggled ON or OFF.
+#
+# The feature under test is specified by the second input CSV and identified
+# by the `second_label_name` parameter (e.g., "rq_legacy_empty_list_off",
+# "rq_lut_no_lut", etc.).
 #
 # INPUTS:
 #   - rq_legacy_time_csv:
-#       CSV file containing query timings for rq-legacy with empty-list optimization ON.
+#       CSV file containing query timings for the baseline rq-legacy run.
 #       Expected columns: JSON, QUERY_ID, QUERY_TIME_SECONDS, REPETITIONS
 #       Example rows:
 #           JSON,QUERY_ID,QUERY_TIME_SECONDS,REPETITIONS
 #           bestbuy_large_record_(1GB),1,1.39657,20
 #           bestbuy_large_record_(1GB),2,0.12507,20
 #
-#   - rq_legacy_empty_list_opt_off_time_csv:
-#       CSV file containing query timings for rq-legacy with empty-list optimization OFF.
-#       Same format and JSON/QUERY_IDs as above.
+#   - rq_legacy_empty_list_opt_off_time_csv (second input CSV):
+#       CSV file containing query timings for rq-legacy or rq-lut with a feature
+#       disabled or modified. Same format and JSON/QUERY_IDs as the baseline.
 #
 #   - counter_folder:
 #       Directory with per-JSON CSV files containing skip statistics.
@@ -97,21 +102,36 @@ def plot(
 #   - result_dir:
 #       Directory where the output plots will be saved. Will be created if it doesn’t exist.
 #
+#   - second_label_name:
+#       Label to use for the second dataset in the legend (e.g. "rq_legacy_empty_list_off",
+#       "rq_lut_no_lut").
+#
 # OUTPUT:
 #   For each JSON value in the input CSVs, one PNG file is generated in result_dir:
 #       <JSON>_combined_plot.png
 #
 #   Each figure has two rows:
 #       Row 1: Line plot of query execution times:
-#              - Red solid line with circles = rq-legacy (default, opt ON)
-#              - Blue solid line with circles = rq-legacy (empty-list-opt OFF)
+#              - Red dotted line with circles = rq-legacy (baseline)
+#              - Blue dotted line with circles = second dataset (label = second_label_name)
 #       Row 2: Bar plot of skip percentage per query (if counter data is available).
 #
-# This allows direct comparison of the effect of disabling empty-list optimization.
+# This allows direct comparison of rq-legacy vs. another configuration
+# (e.g., empty-list optimization off, LUT disabled, etc.) in terms of
+# query time and skip behavior.
 if __name__ == "__main__":
+    # INPUT
     rq_legacy_time_csv = "res/data/speed/server/rq_legacy/query_count/rq_legacy_time_repetitions=20.csv"
     rq_legacy_empty_list_opt_off_time_csv = "res/data/speed/server/rq_legacy_empty_list_opt_off/rq_legacy_empty_list_opt_off_time_repetitions=20.csv"
     result_dir = "res/plots/speed/server/empty_list_opt"
     counter_folder = "res/data/analysis/query"
 
-    plot(rq_legacy_time_csv, rq_legacy_empty_list_opt_off_time_csv, counter_folder, result_dir)
+    print("Processing: rq_legacy_empty_list_opt_off")
+    plot(rq_legacy_time_csv, rq_legacy_empty_list_opt_off_time_csv, counter_folder, result_dir, "rq_legacy_empty_list_off")
+
+    # INPUT
+    rq_lut_no_lut_time_csv = "res/data/speed/server/rq_lut_no_lut/query_count/rq_lut_no_lut_time_repetitions=20.csv"
+    result_dir = "res/plots/speed/server/rq_lut_no_lut"
+
+    print("Processing: rq_lut_no_lut")
+    plot(rq_legacy_time_csv, rq_lut_no_lut_time_csv, counter_folder, result_dir, "rq_lut_no_lut")
