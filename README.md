@@ -1,6 +1,6 @@
 # rsonpath-plotting
 
-A Python project for generating plots to analyze and visualize results from **[rsonpath](https://github.com/rsonpath/rsonpath)** experiments
+A Python project for generating plots to analyze and visualize results from **[rsonpath](https://github.com/rsonquery/rsonpath)** experiments
 and its lookup-table (LUT) modification.
 
 ---
