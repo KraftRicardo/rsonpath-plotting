@@ -58,7 +58,7 @@ def plot(build_csv: str, output_dir: str = "plots"):
             y="SIZE_MB",
             hue="CUTOFF",
             ax=axes[1],
-            palette="Greens_d",
+            palette=["#6AA84F"] * df["CUTOFF"].nunique(),
             legend=False
         )
         axes[1].set_ylabel("LUT Size (MB)")
