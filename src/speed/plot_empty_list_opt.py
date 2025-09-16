@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+
 def plot(
         rq_legacy_time_csv: str,
         rq_legacy_empty_list_opt_off_time_csv: str,
@@ -17,8 +18,10 @@ def plot(
     legacy_data['QUERY_ID'] = legacy_data['QUERY_ID'].astype(str)
     legacy_data_2['QUERY_ID'] = legacy_data_2['QUERY_ID'].astype(str)
 
-    # Ensure the result directory exists
+    # Ensure result directories exist
     os.makedirs(result_dir, exist_ok=True)
+    short_dir = os.path.join(result_dir, "short")
+    os.makedirs(short_dir, exist_ok=True)
 
     # Plot for each JSON file
     for json_name, group in legacy_data.groupby('JSON'):
@@ -45,15 +48,12 @@ def plot(
             sorted_query_ids = group['QUERY_ID'].unique()
 
         # --- Plot 1: Query Times ---
-        # Align both datasets to sorted QUERY_IDs
         group_sorted = group.drop_duplicates(subset=['QUERY_ID']).set_index('QUERY_ID').reindex(sorted_query_ids).reset_index()
         group_2_sorted = group_2.drop_duplicates(subset=['QUERY_ID']).set_index('QUERY_ID').reindex(sorted_query_ids).reset_index()
 
-        # Plot legacy
         ax[0].plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'],
                    marker='o', linestyle=':', color='red', label='rq-legacy')
 
-        # Plot legacy (empty list opt OFF)
         ax[0].plot(group_2_sorted['QUERY_ID'], group_2_sorted['QUERY_TIME_SECONDS'],
                    marker='o', linestyle=':', color='blue', label=second_label_name)
 
@@ -64,12 +64,33 @@ def plot(
         ax[0].grid(True)
         ax[0].legend()
 
-        # Save the figure
+        # --- Save the combined figure ---
         plt.tight_layout()
         plot_filename = os.path.join(result_dir, f"{json_name}_combined_plot.png")
         plt.savefig(plot_filename)
         print(f"Generated: {plot_filename}")
-        plt.close()
+        plt.close(fig)
+
+        # --- Save only Plot 1 (short version) ---
+        fig_short, ax_short = plt.subplots(figsize=(10, 6))
+
+        ax_short.plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'],
+                      marker='o', linestyle=':', color='red', label='rq-legacy')
+        ax_short.plot(group_2_sorted['QUERY_ID'], group_2_sorted['QUERY_TIME_SECONDS'],
+                      marker='o', linestyle=':', color='blue', label=second_label_name)
+
+        ax_short.set_title(f'Query Time Comparison for {json_name}')
+        ax_short.set_xlabel('QUERY_ID')
+        ax_short.set_ylabel('Query Time (Seconds)')
+        ax_short.tick_params(axis='x', rotation=45)
+        ax_short.grid(True)
+        ax_short.legend()
+
+        plt.tight_layout()
+        short_filename = os.path.join(short_dir, f"{json_name}_short_plot.png")
+        plt.savefig(short_filename)
+        print(f"Generated: {short_filename}")
+        plt.close(fig_short)
 
 # Run with: python src/speed/plot_empty_list_opt.py
 #

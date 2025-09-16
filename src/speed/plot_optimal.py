@@ -37,7 +37,7 @@ def plot(
     os.makedirs(result_dir, exist_ok=True)
 
     # Create a colormap with enough distinct colors for the given cutoff values
-    cmap = plt.colormaps.get_cmap('tab20', len(cutoffs))  # Using 'tab20' colormap
+    cmap = plt.cm.get_cmap('tab20', len(cutoffs))  # Using 'tab20' colormap
     colors = [cmap(i) for i in range(len(cutoffs))]
 
     # Create a plot for each JSON
@@ -106,7 +106,46 @@ def plot(
         plot_filename = os.path.join(result_dir, f"{json_name}_count.png")
         plt.savefig(plot_filename)
         print(f"Generated: {plot_filename}")
-        plt.close()
+
+        # --- Save "short" version with only top plot ---
+        short_dir = os.path.join(result_dir, "short")
+        os.makedirs(short_dir, exist_ok=True)
+
+        fig_short, ax_short = plt.subplots(figsize=(10, 6))
+
+        # Replot only the top plot here
+        ax_short.plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'],
+                      marker='o', linestyle='-', color='red', label='Original Query Time')
+
+        ax_short.plot(group_sorted['QUERY_ID'], group_sorted['OPTIMAL_TIME'],
+                      marker='o', linestyle='--', color='red', label='Optimal Time')
+
+        lut_subset = lut_data[lut_data['JSON'] == json_name]
+        for i, cutoff in enumerate(cutoffs):
+            lut_cutoff_group = lut_subset[lut_subset['CUTOFF'] == f"{cutoff}"]
+            lut_cutoff_group = lut_cutoff_group.set_index('QUERY_ID').reindex(sorted_query_ids).reset_index()
+            ax_short.plot(
+                lut_cutoff_group['QUERY_ID'],
+                lut_cutoff_group['QUERY_TIME_SECONDS'],
+                marker='x', linestyle='-', color=colors[i],
+                label=f'LUT Time (CUTOFF={cutoff})'
+            )
+
+        ax_short.set_title(f'Query Time for {json_name}')
+        ax_short.set_xlabel('QUERY_ID')
+        ax_short.set_ylabel('Query Time (Seconds)')
+        ax_short.tick_params(axis='x', rotation=45)
+        ax_short.grid(True)
+        ax_short.legend()
+
+        plt.tight_layout()
+        short_filename = os.path.join(short_dir, f"{json_name}_count_short.png")
+        plt.savefig(short_filename)
+        print(f"Generated short plot: {short_filename}")
+        plt.close(fig_short)
+
+        # Close the original figure
+        plt.close(fig)
 
 
 # Run with: python src/speed/plot_optimal.py
@@ -149,6 +188,7 @@ if __name__ == "__main__":
     # cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 1024, 2048, 4096, 8192, 1099511627776]
     # cutoffs = [0, 640, 1024]
     # cutoffs = [1024]
+    cutoffs = [0, 1024]
     # cutoffs = [1099511627776]
-    cutoffs = [4096, 8192,]
+    # cutoffs = [4096, 8192,]
     plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)

@@ -1,5 +1,4 @@
 import os
-
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -36,6 +35,8 @@ def plot(
     merged_data['OPTIMAL_TIME'] = merged_data['QUERY_TIME_SECONDS'] - (merged_data['SKIP_TIME_NANO_SECONDS'] / 1e9)
 
     os.makedirs(result_dir, exist_ok=True)
+    short_dir = os.path.join(result_dir, "short")
+    os.makedirs(short_dir, exist_ok=True)
 
     cmap = plt.get_cmap('tab20', len(cutoffs))
     colors = [cmap(i) for i in range(len(cutoffs))]
@@ -110,6 +111,48 @@ def plot(
         print(f"Generated: {plot_filename}")
         plt.close()
 
+        # --- SAVE ONLY THE TOP PLOT (short version) ---
+        fig_short, ax_short = plt.subplots(figsize=(10, 6))
+
+        # Redo top plot in short version
+        ax_short.plot(group_sorted['QUERY_ID'], group_sorted['QUERY_TIME_SECONDS'],
+                      marker='o', linestyle='-', color='red', label='Original Query Time')
+        ax_short.plot(group_sorted['QUERY_ID'], group_sorted['OPTIMAL_TIME'],
+                      marker='o', linestyle='--', color='red', label='Optimal Time')
+
+        ax_short.plot(
+            serde_subset_df['QUERY_ID'],
+            serde_subset_df['QUERY_TIME_SECONDS'],
+            marker='s',
+            linestyle=':',
+            color='blue',
+            label='Serde'
+        )
+
+        for i, cutoff in enumerate(cutoffs):
+            lut_cutoff_group = lut_subset_df[lut_subset_df['CUTOFF'] == f"{cutoff}"]
+            lut_cutoff_group = lut_cutoff_group.set_index('QUERY_ID').reindex(sorted_query_ids).reset_index()
+            ax_short.plot(
+                lut_cutoff_group['QUERY_ID'],
+                lut_cutoff_group['QUERY_TIME_SECONDS'],
+                marker='x',
+                linestyle='-',
+                color=colors[i],
+                label=f'LUT Time (CUTOFF={cutoff})'
+            )
+
+        ax_short.set_title(f'Query Time for {json_name}')
+        ax_short.set_xlabel('QUERY_ID')
+        ax_short.set_ylabel('Query Time (Seconds)')
+        ax_short.tick_params(axis='x', rotation=45)
+        ax_short.grid(True)
+        ax_short.legend()
+
+        plt.tight_layout()
+        short_filename = os.path.join(short_dir, f"{json_name}_node_short.png")
+        plt.savefig(short_filename)
+        print(f"Generated short plot: {short_filename}")
+        plt.close()
 
 
 # Run with: python src/speed/plot_optimal_node.py
@@ -126,5 +169,6 @@ if __name__ == "__main__":
 
     # cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 1024, 2048, 4096, 8192, 1099511627776]
     # cutoffs = [0, 640, 1024]
-    cutoffs = []
-    plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, rq_serde_time_csv, counter_folder, cutoffs, result_dir)
+    cutoffs = [0, 1024]
+    plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, rq_serde_time_csv, counter_folder, cutoffs,
+         result_dir)
