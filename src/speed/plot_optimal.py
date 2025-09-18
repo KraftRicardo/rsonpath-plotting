@@ -188,7 +188,8 @@ if __name__ == "__main__":
     # cutoffs = [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 1024, 2048, 4096, 8192, 1099511627776]
     # cutoffs = [0, 640, 1024]
     # cutoffs = [1024]
-    cutoffs = [0, 1024]
+    # cutoffs = [0, 1024]
     # cutoffs = [1099511627776]
     # cutoffs = [4096, 8192,]
+    cutoffs = []
     plot(rq_legacy_skip_time, rq_legacy_time_csv, rq_lut_time_csv, counter_folder, cutoffs, result_dir)

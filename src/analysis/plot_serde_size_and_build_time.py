@@ -73,6 +73,7 @@ def plot(
     ax1.legend(fontsize=legend_fontsize)
     ax1.tick_params(axis='x', labelsize=tick_fontsize, rotation=45)
     ax1.tick_params(axis='y', labelsize=tick_fontsize)
+    ax1.set_ylim(bottom=0)
 
     # Plot 2: Parse Time
     ax2.plot(names, build_time1, marker="o", label="BTree")
@@ -83,6 +84,7 @@ def plot(
     ax2.legend(fontsize=legend_fontsize)
     ax2.tick_params(axis='x', labelsize=tick_fontsize, rotation=45)
     ax2.tick_params(axis='y', labelsize=tick_fontsize)
+    ax2.set_ylim(bottom=0)
 
     plt.tight_layout()
     result_png_path = f"{result_dir_path}/serde_size_and_build_time.png"
