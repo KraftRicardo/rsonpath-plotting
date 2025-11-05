@@ -1,14 +1,14 @@
 # rsonpath-plotting
 
-A Python project for generating plots to analyze and visualize results from **[rsonpath](https://github.com/rsonquery/rsonpath)** experiments
+A Python project for generating plots to analyze and visualize results from **[rsonpath-lut](https://github.com/KraftRicardo/rsonpath/tree/main)** experiments
 and its lookup-table (LUT) modification.
 
 ---
 
 ## ✨ Features
 
-This repository includes multiple plotting scripts, each producing specialized figures for different aspects of `rsonpath` performance.  
-All figures below are automatically generated using real benchmark data.
+This repository includes multiple plotting scripts, each producing specialized figures for different aspects of `rsonpath-lut` performance.  
+All figures below are automatically generated using the data generated from there.
 
 ---
 
