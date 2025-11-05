@@ -64,43 +64,61 @@ Plots Serde’s build time and heap ratio compared to the input JSON.
 
 ![plot_serde_size_and_build_time](res/readme_figures/plot_serde_size_and_build_time.png)
 
----
+[//]: # (---)
 
+[//]: # ()
 [//]: # (### 🔧 Distance Cutoff Experiments)
 
 [//]: # ()
+[//]: # ()
 [//]: # (**`plot_distance_cutoff`**  )
 
+[//]: # ()
 [//]: # (Compares query speed for the LUT implementation at different cutoffs. Also shows LUT size and build time.)
 
 [//]: # ()
+[//]: # ()
 [//]: # (![plot_distance_cutoff]&#40;res/readme_figures/plot_distance_cutoff.png&#41;)
 
-[//]: # ()
-[//]: # (---)
 
-[//]: # ()
-[//]: # (**`plot_distance_cutoff_sizes`**  )
+---
 
-[//]: # (Visualizes LUT sizes and build times per cutoff and JSON:)
+### 🧱 LUT Construction
+**`plot_lut_construction`**  
+Compares different LUT implementations in build-time, query-time, and heap size.
 
-[//]: # ()
-[//]: # (- LUT sizes &#40;MB&#41;  )
+![plot_lut_construction](res/readme_figures/plot_lut_construction.png)
 
-[//]: # (  ![plot_distance_cutoff_sizes_size]&#40;res/readme_figures/plot_distance_cutoff_sizes_size.png&#41;)
+**`plot_lut_build_speed_and_size`**
+After deciding for a LUT implementation one can now plot the LUT build speed and size for different cutoffs, while
+also tracking how long the collection step of the brackets takes.
 
-[//]: # ()
-[//]: # (- LUT build times &#40;s&#41;  )
+![lut_build_speed_and_size](res/readme_figures/plot_lut_build_speed_and_size.png)
 
-[//]: # (  ![plot_distance_cutoff_sizes_build_time]&#40;res/readme_figures/plot_distance_cutoff_sizes_build_time.png&#41;)
+---
 
-[//]: # ()
-[//]: # (- Relative to cutoff = 0 &#40;percent scale&#41;  )
 
-[//]: # (  ![plot_distance_cutoff_sizes_combined]&#40;res/readme_figures/plot_distance_cutoff_sizes_combined.png&#41;)
+**`plot_distance_cutoff_sizes`**
 
-[//]: # ()
-[//]: # (---)
+Visualizes LUT sizes and build times per cutoff and JSON but now for all JSONs in one graph:
+
+
+- LUT sizes (MB)
+
+  ![plot_distance_cutoff_sizes_size](res/readme_figures/plot_distance_cutoff_sizes_size.png)
+
+
+- LUT build times (s)
+
+  ![plot_distance_cutoff_sizes_build_time](res/readme_figures/plot_distance_cutoff_sizes_build_time.png)
+
+
+- Relative to cutoff = 0 (percent scale)
+
+  ![plot_distance_cutoff_sizes_combined](res/readme_figures/plot_distance_cutoff_sizes_combined.png)
+
+
+---
 
 ### 🪶 Empty List Optimization
 **`plot_empty_list_opt`**  
@@ -114,20 +132,6 @@ Compares `rq_legacy` vs. `rq_legacy_empty_list_opt` to evaluate the effect of th
 Compares `rq_legacy` vs. `rq_lut_no_lut` to evaluate the effect of the base code changes on the speed.
 
 ![plot_rq_lut_no_lut](res/readme_figures/plot_rq_lut_no_lut.png)
-
----
-
-### 🧱 LUT Construction
-**`plot_lut_construction`**  
-Compares different LUT implementations in build-time, query-time, and heap size.
-
-![plot_lut_construction](res/readme_figures/plot_lut_construction.png)
-
-
-After deciding for a LUT implementation one can now plot the LUT build speed and size for different cutoffs, while
-also tracking how long the collection step of the brackets takes.
-
-![lut_build_speed_and_size](res/readme_figures/plot_lut_build_speed_and_size.png)
 ---
 
 ### 🏁 Final Comparison
@@ -150,14 +154,16 @@ Compares query speed of `rq-legacy` vs. the theoretical optimal vs. `rq-lut` wit
 
 ![plot_optimal](res/readme_figures/plot_optimal.png)
 
-A table to find the best cutoff based on that data.
-
-![find_best_cutoff_table](res/readme_figures/find_best_cutoff_table.png)
-
+**plot_optimal_node**
 Like plot optimal but this time we queried for the complete results (NODE and not COUNT) which means we can also compare
 it with serde.
 
 ![plot_optimal_node](res/readme_figures/plot_optimal_node.png)
+
+**find_best_cutoff_table**
+A table to find the best cutoff based on that data.
+
+![find_best_cutoff_table](res/readme_figures/find_best_cutoff_table.png)
 
 ---
 
