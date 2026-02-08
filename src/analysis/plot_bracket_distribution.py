@@ -15,8 +15,12 @@ def plot(json_stats_csv: str, result_dir: str):
     # Create stacked bar plot
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    ax.bar(df["JSON"], df["CURLY_PERCENT"], label="Curly %")
-    ax.bar(df["JSON"], df["SQUARY_PERCENT"], bottom=df["CURLY_PERCENT"], label="Squary %")
+    # ax.bar(df["JSON"], df["CURLY_PERCENT"], label="Curly %")
+    # ax.bar(df["JSON"], df["SQUARY_PERCENT"], bottom=df["CURLY_PERCENT"], label="Squary %")
+
+    ax.bar(df["JSON"], df["SQUARY_PERCENT"], label="Squary %")
+    ax.bar(df["JSON"], df["CURLY_PERCENT"],
+           bottom=df["SQUARY_PERCENT"], label="Curly %")
 
     # Formatting
     ax.set_ylabel("Percent")
@@ -32,6 +36,7 @@ def plot(json_stats_csv: str, result_dir: str):
     plt.savefig(plot_filename)
     print(f"Generated: {plot_filename}")
     plt.close()
+
 
 #
 if __name__ == "__main__":

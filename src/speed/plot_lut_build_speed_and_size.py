@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+
 def plot(build_csv: str, output_dir: str = "plots"):
     # Read data
     build_df = pd.read_csv(build_csv)
@@ -14,7 +15,8 @@ def plot(build_csv: str, output_dir: str = "plots"):
     build_df["SIZE_MB"] = build_df["SIZE_IN_BYTES"] / (1024 * 1024)
 
     # Compute build-only time (excluding collection)
-    build_df["BUILD_ONLY_SECONDS"] = build_df["BUILD_TIME_SECONDS"] - build_df["COLLECTION_TIME_SECONDS"]
+    build_df["BUILD_ONLY_SECONDS"] = build_df["BUILD_TIME_SECONDS"] - \
+        build_df["COLLECTION_TIME_SECONDS"]
 
     # Create output directory if it doesn’t exist
     os.makedirs(output_dir, exist_ok=True)
@@ -67,11 +69,13 @@ def plot(build_csv: str, output_dir: str = "plots"):
         plt.tight_layout(rect=[0, 0, 1, 0.95])
 
         # Save plot
-        safe_name = json_name.replace(" ", "_").replace("(", "").replace(")", "").replace("/", "_")
+        safe_name = json_name.replace(" ", "_").replace(
+            "(", "").replace(")", "").replace("/", "_")
         filepath = os.path.join(output_dir, f"{safe_name}.png")
         print(f"Saved to {filepath}")
         plt.savefig(filepath, dpi=150)
         plt.close(fig)
+
 
 # Run with: python src/speed/plot_lut_build_speed_and_size.py
 #
@@ -92,7 +96,7 @@ def plot(build_csv: str, output_dir: str = "plots"):
 # with filenames derived from the dataset names.
 if __name__ == "__main__":
     # Input
-    build_csv = "res/data/speed/server/lut_build_speed_and_size/build_repetitions=10.csv"
+    build_csv = "res/data/speed/server/lut_build_speed_and_size/build_repetitions=20.csv"
     result_dir = "res/plots/speed/server/lut_build_speed_and_size"
 
     plot(build_csv, result_dir)
